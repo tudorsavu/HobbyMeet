@@ -4,7 +4,7 @@ This is a web application made for people who want to meet other people with sim
 
 ![main page](/Images/mainpage.JPG)
 
-![navigation](/Images/navigation.JPG)
+![navigation](/Images/navigation.png)
 
 ![profile](/Images/profile.JPG)
 
