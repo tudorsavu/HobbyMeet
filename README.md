@@ -6,10 +6,6 @@ This is a web application made for people who want to meet other people with sim
 
 ![main page](/Images/mainpage.JPG)
 
-<h2>Profile</h2>
-
-![profile](/Images/profile.JPG)
-
 <h2>Chat</h2>
 
 ![chat](/Images/chats.JPG)
