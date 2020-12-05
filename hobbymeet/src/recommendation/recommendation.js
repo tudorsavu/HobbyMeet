@@ -1,6 +1,5 @@
 import React from 'react'
-import { Typography, Paper, Avatar, Grid, Button, CircularProgress, TextField } from '@material-ui/core';
-import { Autocomplete } from "@material-ui/lab"
+import { Typography, Paper, Avatar, Grid, Button, Box } from '@material-ui/core';
 import styles from "./styles";
 import withStyles from "@material-ui/core/styles/withStyles";
 import axios from "axios"
@@ -11,19 +10,17 @@ import CloseIcon from '@material-ui/icons/Close';
 const firebase = require("firebase/app")
 
 export class Recommendation extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             current: {
                 hobbies: [{ name: "" }, { name: "" }, { name: "" }]
             },
             iterator: 0,
             isLoading: true,
-            viewHasClicked: false,
-            btnText: "View recommendations!",
             hobbiesListFromApi: [],
-            alert: false,
-            flag: false
+            flag: false,
+            noMoreRec: false
         }
     }
 
@@ -36,31 +33,32 @@ export class Recommendation extends React.Component {
             return;
         }
         this.setOpen(false);
-    };
-
-    componentDidMount() {
-        axios.get("https://localhost:44379/api/Hobbies")
-            .then(res => {
-                this.setState({ hobbiesListFromApi: res.data })
-            })
-            .catch(err => { console.log(err) })
     }
 
-    handleClick = () => {
-        if (this.state.viewHasClicked === false) {
-            this.setState({
-                viewHasClicked: true,
-                btnText: "View next"
-            })
+    componentDidMount(){
+        if(this.props.recommendations === []){
+            this.setState({noMoreRec: true})
+            return
         }
-        const email = this.props.recommendations[this.state.iterator].userId
-        if (this.state.iterator + 1 === this.props.recommendations.length) {
+        this.handleClick()
+    }
 
-            alert("No more recommendations left!")
+    componentWillUnmount() {
+        this.setState = (state, callback) => {
+          return
+        }
+      }
+
+    handleClick = () => {
+        
+        
+        if (this.state.iterator === this.props.recommendations.length) {
+            this.setState({noMoreRec: true})
+            return
         } else {
             this.setState({ iterator: this.state.iterator + 1 })
         }
-
+        const email = this.props.recommendations[this.state.iterator].userId
         firebase.firestore().collection("users").doc(email).get().then(doc => {
             axios.get("https://localhost:44379/api/users/" + email).then(hobbies => {
                 this.setState({
@@ -73,9 +71,7 @@ export class Recommendation extends React.Component {
                         hobbies: hobbies.data
                     }
                 })
-
             })
-
         })
     }
 
@@ -103,118 +99,96 @@ export class Recommendation extends React.Component {
     render() {
         const { classes } = this.props;
         const { current } = this.state;
-        if (firebase.auth().currentUser === null) {
-            return (<div>Sign up to meet like minded people!</div>);
-        }
-        if (this.props.recommendations[0] === undefined) {
-            return (
-                <div className={classes.circularProg}>
-                    <CircularProgress />
-                </div>
-            )
-        }
-        if (this.state.viewHasClicked === false) {
-            return (
-                <div className={classes.root}>
-                    <Avatar src={this.props.userObj.imageUrl} className={classes.avatar} />
-                    <Button className={classes.nextBtn} variant="contained" color="primary" onClick={() => { this.handleClick() }}>
-                        {this.state.btnText}
-                    </Button>
-                    <Typography className={classes.or} variant="body2" color="textSecondary"> -or- </Typography>
-                    <Autocomplete
-                        className={classes.nextBtn}
-                        onChange={(event, value) => this.props.handleHobbySearchChange(value)}
-                        options={this.state.hobbiesListFromApi.map((option) => option.name)}
-                        getOptionLabel={(option) => option}
-                        renderInput={(params) => <TextField {...params} label="Search people by a hobby!" variant="outlined" />} />
-                    <Button className={classes.nextBtn} variant="contained" color="primary" onClick={() => { this.handleClick() }}>
-                        Search
-                    </Button>
-                </div>
-
-
-
-            )
-        }
-
+        
+        
         return (
             <div className={classes.root}>
-                {
-                    this.state.viewHasClicked ?
-                        <Paper className={classes.paper}>
-                            <Grid container direction="column" alignContent="center" justify="center" spacing={3}>
-                                <Grid item xs={12} className={classes.img}>
-                                    <Avatar src={this.state.current.url} className={classes.avatar} />
-                                </Grid>
-                                <Grid item xs={12} sm container>
-                                    <Grid item xs container direction="column" spacing={2}>
-                                        <Grid item xs>
-                                            <Typography variant="h5">{current.name}</Typography>
-                                            <Typography gutterBottom variant="body2" color="textSecondary">{current.email}</Typography>
-                                        </Grid>
-                                        <Grid item>
-                                            <Typography variant="body1">"{current.description}"</Typography>
-                                        </Grid>
-
-                                    </Grid>
-                                    <Grid item>
-                                        <Typography variant="body1">Age group: {current.age}</Typography>
-                                    </Grid>
-                                </Grid>
-
-                                <Grid item xs container direction="row" spacing={2}>
-                                    <Grid item>
-                                        <Typography variant="body2" className={classes.hobbyItm}>{current.hobbies[0].name}</Typography>
-                                    </Grid>
-                                    <Grid item>
-                                        <Typography variant="body2" className={classes.hobbyItm}>{current.hobbies[1].name}</Typography>
-                                    </Grid>
-                                    <Grid item>
-                                        <Typography variant="body2" className={classes.hobbyItm}>{current.hobbies[2].name}</Typography>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                        </Paper> : null
-                }
-
-
-
-                {
-                    this.state.viewHasClicked ?
+                {  this.state.noMoreRec ? 
+                <div className={classes.root}>
+                    <Typography variant="h2" className={classes.noMoreRec}>No more recommendations left!</Typography>
+                    <div className={classes.btnContainer}>
+                    <Button className={classes.nextBtn} variant="contained" color="primary" onClick={() => { this.props.handleComponentChange("dashboard")  }}>
+                            Back Home
+                    </Button>
+                    </div>
+                </div>: 
                         <div className={classes.root}>
-                            <Button className={classes.nextBtn} variant="contained" color="primary" onClick={() => { this.handleClick() }}>
-                                {this.state.btnText}
-                            </Button>
-                            <Button className={classes.nextBtn} variant="contained" color="primary"
-                                onClick={() => { this.sendFriendRequest() }}>
-                                Add friend
-                            </Button>
-                            <div>
-                                <Snackbar
-                                    anchorOrigin={{
-                                        vertical: 'bottom',
-                                        horizontal: 'left',
-                                    }}
-                                    open={this.state.flag}
-                                    autoHideDuration={6000}
-                                    onClose={() => { this.handleClose() }}
-                                    message="Friend request sent!"
-                                    action={
-                                        <React.Fragment>
-                                            <IconButton size="small" aria-label="close" color="inherit" onClick={() => { this.handleClose() }}>
-                                                <CloseIcon fontSize="small" />
-                                            </IconButton>
-                                        </React.Fragment>
-                                    }
-                                />
-                            </div>
-
-                        </div> : null
+                                    <Paper className={classes.paper}>
+                                        <Grid container direction="column" alignContent="center" justify="center" spacing={3}>
+                                            <Grid item xs={12} className={classes.img}>
+                                                <Avatar src={this.state.current.url} className={classes.avatar} />
+                                            </Grid>
+                                            <Grid item xs={12} sm container>
+                                                <Grid item xs container direction="column" spacing={2}>
+                                                    <Grid item xs>
+                                                        <Typography variant="h5">{current.name}</Typography>
+                                                        <Typography gutterBottom variant="body2" color="textSecondary">{current.email}</Typography>
+                                                    </Grid>
+                                                    <Grid item>
+                                                        <Box component="div" whiteSpace="normal">
+                                                            {current.description}
+                                                        </Box>
+                                                    </Grid>
+            
+                                                </Grid>
+                                                <Grid item>
+                                                    <Typography variant="body1">Age group: {current.age}</Typography>
+                                                </Grid>
+                                            </Grid>
+            
+                                            <Grid item xs container direction="row" spacing={2}>
+                                                <Grid item>
+                                                    <Typography variant="body2" className={classes.hobbyItm}>{current.hobbies[0].name}</Typography>
+                                                </Grid>
+                                                <Grid item>
+                                                    <Typography variant="body2" className={classes.hobbyItm}>{current.hobbies[1].name}</Typography>
+                                                </Grid>
+                                                <Grid item>
+                                                    <Typography variant="body2" className={classes.hobbyItm}>{current.hobbies[2].name}</Typography>
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+                                    </Paper> 
+                                    <div className={classes.btnContainer}>
+                                        <Button className={classes.nextBtn} variant="contained" color="primary" onClick={() => { this.handleClick() }}>
+                                            View next
+                                        </Button>
+                                        <Button className={classes.nextBtn} variant="contained" color="primary"
+                                            onClick={() => { this.sendFriendRequest() }}>
+                                            Add friend
+                                        </Button>
+                                        <div>
+                                            <Snackbar
+                                                anchorOrigin={{
+                                                    vertical: 'bottom',
+                                                    horizontal: 'left',
+                                                }}
+                                                open={this.state.flag}
+                                                autoHideDuration={6000}
+                                                onClose={() => { this.handleClose() }}
+                                                message="Friend request sent!"
+                                                action={
+                                                    <React.Fragment>
+                                                        <IconButton size="small" aria-label="close" color="inherit" onClick={() => { this.handleClose() }}>
+                                                            <CloseIcon fontSize="small" />
+                                                        </IconButton>
+                                                    </React.Fragment>
+                                                }/>
+                                        </div>
+                                    </div> 
+                           
+                        </div>
+                    
                 }
-
             </div>
-        )
+        
+                
+            )
+        
+       
+        
     }
 }
 
 export default withStyles(styles)(Recommendation)
+/** */

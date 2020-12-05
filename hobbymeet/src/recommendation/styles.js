@@ -4,8 +4,16 @@ const styles = (theme) => ({
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "column",
-        width: "100%"
+        width: "100%",
 
+    },
+    btnContainer: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
+        width: "100%",
+        marginBottom: theme.spacing(1),
     },
     paper: {
         flex: 1,
@@ -13,8 +21,8 @@ const styles = (theme) => ({
         marginLeft: theme.spacing(5),
         marginRight: theme.spacing(5),
         padding: theme.spacing(3),
-        width: "27%"
-
+        width: "40%",
+        maxHeight: "65vh"
     },
 
     nextBtn: {
@@ -28,9 +36,10 @@ const styles = (theme) => ({
     },
 
     avatar: {
-        height: 200,
-        width: 200
-
+        fontSize: "70px",
+        height: "auto",
+        width: "auto",
+        marginTop: theme.spacing(2)
     },
     img: {
         margin: 'auto',
@@ -41,10 +50,11 @@ const styles = (theme) => ({
     hobbyItm: {
         color: "#3f51b5"
     },
-    or: {
-        marginTop: theme.spacing(2)
-    },
-
+   noMoreRec: {
+        marginTop: theme.spacing(24)
+   }
+      
+  
 });
 
 export default styles;

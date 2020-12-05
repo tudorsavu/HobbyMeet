@@ -5,7 +5,6 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Input from "@material-ui/core/Input";
 import Paper from "@material-ui/core/Paper";
 import withStyles from "@material-ui/core/styles/withStyles";
-import CssBaseline from "@material-ui/core/CssBaseline";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import TextField from '@material-ui/core/TextField';
@@ -33,6 +32,14 @@ export class UserDetails extends React.Component {
         const { hobby1, hobby2, hobby3 } = this.state;
         if (this.props.values.name === "") {
             this.setState({ error: "Name field is requiered!" });
+            return false;
+        }
+        if (this.props.values.name.length > 30) {
+            this.setState({ error: "Name must be less than 30 characters." });
+            return false;
+        }
+        if(this.props.values.description.length > 60){
+            this.setState({error : "Description must be less than 60 characters. Your length:" + this.props.values.description.length })
             return false;
         }
         if (hobby1 === null || hobby2 === null || hobby3 === null) {
@@ -114,13 +121,12 @@ export class UserDetails extends React.Component {
         const { classes } = this.props
         const { values, handleChange } = this.props
         return (
-            <main className={classes.main}>
-                <CssBaseline />
+            <div className={classes.root}>
                 <Paper className={classes.paper}>
                     <Typography component="h1" variant="h5">Your details</Typography>
                     <form className={classes.form}>
                         <FormControl required fullWidth margin="normal">
-                            <InputLabel htmlFor="name-input">Your name - this will be visible to other users</InputLabel>
+                            <InputLabel htmlFor="name-input">Your name</InputLabel>
                             <Input defaultValue={values.name} autoFocus onChange={handleChange("name")} id="name-input" />
                         </FormControl>
                         <FormControl variant="outlined" className={classes.formControl}>
@@ -137,7 +143,7 @@ export class UserDetails extends React.Component {
                                 <option value="18-30">18-30</option>
                                 <option value="30-40">30-40</option>
                                 <option value="40-50">40-50</option>
-                                <option value="50>">50></option>
+                                <option value="50>">50</option>
                             </Select>
                         </FormControl>
                         <FormControl fullWidth margin="normal">
@@ -146,6 +152,7 @@ export class UserDetails extends React.Component {
                                 multiline rows={3} rowsMax={3} variant="outlined"
                                 label="Short description about yourself" />
                         </FormControl>
+                        
                         <Typography variant="h6">Pick 3 hobbies!</Typography>
                         <FormControl className={classes.formControl} fullWidth>
                             <Autocomplete
@@ -187,9 +194,8 @@ export class UserDetails extends React.Component {
                         <Button fullWidth variant="contained" color="primary" className={classes.submit}
                             onClick={() => this.back()}>Back</Button>
                     </form>
-
                 </Paper>
-            </main>
+            </div>
         );
 
     }

@@ -2,7 +2,6 @@ import React from "react";
 import axios from "axios"
 import styles from "./styles";
 import withStyles from "@material-ui/core/styles/withStyles";
-
 import { EmailSignup } from "./multiStepForm/emailSignup";
 import { UserDetails } from "./multiStepForm/userDetails";
 import Success from "./multiStepForm/success";
@@ -78,6 +77,8 @@ class SignupComponent extends React.Component {
         );
       case 2:
         return (
+          <div>
+          <Navbar history={this.props.history} />
           <UserDetails
             classes={classes}
             nextStep={this.nextStep}
@@ -85,6 +86,7 @@ class SignupComponent extends React.Component {
             handleAutoCompleteChange={this.handleAutoCompleteChange}
             handleChange={this.handleChange}
             values={values} />
+          </div>
         );
       case 3:
         return <Success />

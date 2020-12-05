@@ -1,23 +1,27 @@
 const styles = (theme) => ({
-  main: {
-    width: "auto",
-    display: "block", // Fix IE 11 issue.
-    marginLeft: theme.spacing(3),
-    marginRight: theme.spacing(3),
-    [theme.breakpoints.up(400 + theme.spacing(3) * 2)]: {
-      width: 400,
-      marginLeft: "auto",
-      marginRight: "auto",
-    },
-  },
-  paper: {
-    marginTop: theme.spacing(8),
+ root: {
+   display: "flex",
+   justifyContent: "center",
+   height: "100%",
+   width:"100%"
+ },
+  signUpPaper: {
+    marginTop: theme.spacing(4),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    padding: `${theme.spacing(2)}px ${theme.spacing(3)}px ${theme.spacing(
-      3
-    )}px`,
+    padding: `${theme.spacing(4)}px ${theme.spacing(5)}px ${theme.spacing(5)}px`,
+    width: "40%",
+    minWidth:"35vh"
+  },
+  paper: {
+    marginTop: theme.spacing(4),
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    padding: `${theme.spacing(4)}px ${theme.spacing(5)}px ${theme.spacing(5)}px`,
+    width: "40%",
+    minWidth:"35vh"
   },
   form: {
     width: "100%",
@@ -49,7 +53,8 @@ const styles = (theme) => ({
     marginTop: theme.spacing(1),
     justifyContent: "center",
     display: "flex"
-  }
+  },
+  
 });
 
 export default styles;

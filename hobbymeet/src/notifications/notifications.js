@@ -10,7 +10,7 @@ const firebase = require("firebase/app")
 class Notifications extends React.Component {
 
     constructor(props) {
-        super(props)
+        super()
         this.state = {
             notiData: []
         }
@@ -19,6 +19,11 @@ class Notifications extends React.Component {
     componentDidMount() {
         this.getNotificationsData()
     }
+    componentWillUnmount() {
+        this.setState = (state, callback) => {
+          return
+        }
+      }
 
     getNotificationsData = () => {
         if (this.props.userObj.notifications !== undefined) {
@@ -68,11 +73,12 @@ class Notifications extends React.Component {
         })
         firebase.firestore().collection("users").doc(email).update({
             sentFriendRequests: firebase.firestore.FieldValue.arrayRemove(curUser),
-        })
+        }).then(() => {
+            this.removeFromState(email)
+        }, () =>{})
 
 
-        this.removeFromState(email)
-
+       
     }
 
     createDocName = (curUser, email) => {
@@ -91,7 +97,8 @@ class Notifications extends React.Component {
             }
 
         }
-        this.setState({ notiData: data }, () => { console.log(this.state) })
+        this.setState({ notiData: data }, () => { })
+        this.props.userObj.notifications = data
     }
 
 
@@ -104,7 +111,6 @@ class Notifications extends React.Component {
                 </div>);
         }
 
-        console.log(this.state.notiData)
         return (
             <div className={classes.profileRoot}>
                 {this.state.notiData.map((user, index) =>

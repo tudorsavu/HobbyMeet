@@ -49,9 +49,10 @@ export class EmailSignup extends React.Component {
         const { classes } = this.props
         const { values, handleChange } = this.props
         return (
-            <main className={classes.main}>
+            <div>
+            <main  className={classes.root}>
                 <CssBaseline />
-                <Paper className={classes.paper}>
+                <Paper className={classes.signUpPaper}>
                     <Typography component="h1" variant="h5">Sign Up</Typography>
                     <form className={classes.form}>
                         <FormControl required fullWidth margin="normal">
@@ -81,6 +82,8 @@ export class EmailSignup extends React.Component {
 
                 </Paper>
             </main>
+            </div>
+           
         );
 
     }

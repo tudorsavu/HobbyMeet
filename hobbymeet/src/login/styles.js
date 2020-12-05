@@ -9,6 +9,7 @@ const styles = (theme) => ({
             marginLeft: "auto",
             marginRight: "auto",
         },
+        height: "35.4em"
     },
     paper: {
         marginTop: theme.spacing(8),
@@ -18,6 +19,7 @@ const styles = (theme) => ({
         padding: `${theme.spacing(2)}px ${theme.spacing(3)}px ${theme.spacing(
             3
         )}px`,
+        minWidth: "35vh"
     },
     form: {
         width: "100%",
@@ -39,6 +41,10 @@ const styles = (theme) => ({
         color: "red",
         textAlign: "center",
     },
+    footer: {
+        backgroundColor: "#000000",
+        height: "7em"
+      },
 });
 
 export default styles;
