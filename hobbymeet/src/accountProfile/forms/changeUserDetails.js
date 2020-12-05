@@ -73,10 +73,14 @@ class ChangeUserDetails extends React.Component {
 
         if (this.validate() === true) {
             const userHobbies = {
-                UserId: this.props.userObj.id,
+                UserId: this.props.userObj.email,
                 HobbyNames: [this.state.hobby1, this.state.hobby2, this.state.hobby3]
             }
             axios.put("https://localhost:44379/api/users", userHobbies).then(() => {
+                
+                this.props.userObj.hobbies[0].name = userHobbies.HobbyNames[0]
+                this.props.userObj.hobbies[1].name = userHobbies.HobbyNames[1]
+                this.props.userObj.hobbies[2].name = userHobbies.HobbyNames[2]
 
                 firebase
                     .firestore()
@@ -120,7 +124,7 @@ class ChangeUserDetails extends React.Component {
                             <option value="18-30">18-30</option>
                             <option value="30-40">30-40</option>
                             <option value="40-50">40-50</option>
-                            <option value="50>">50></option>
+                            <option value="50>">50+</option>
                         </Select>
                     </FormControl>
 

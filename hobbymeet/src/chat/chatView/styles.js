@@ -1,15 +1,17 @@
 const styles = theme => ({
 
     content: {
-        height: 'calc(100vh - 150px)',
-        overflow: 'auto',
-        padding: '25px',
-        marginLeft: '300px',
-        boxSizing: 'border-box',
         overflowY: 'scroll',
-        top: '100px',
-        width: 'calc(100% - 300px)',
-        position: 'absolute'
+        height:"70vh",
+        padding: '25px',
+        boxSizing: 'border-box',
+        width: '100%',
+        borderWidth: "1px",
+        borderColor: "#ccc",
+        borderRightStyle: "solid",
+        borderLeftStyle: "solid",
+        borderBottomStyle: "solid",
+       
     },
 
     userSent: {
@@ -18,7 +20,7 @@ const styles = theme => ({
         padding: '10px',
         boxSizing: 'border-box',
         wordWrap: 'break-word',
-        marginTop: '40px',
+        marginTop: '10px',
         backgroundColor: '#707BC4',
         color: 'white',
         width: '200px',
@@ -31,7 +33,7 @@ const styles = theme => ({
         padding: '10px',
         boxSizing: 'border-box',
         wordWrap: 'break-word',
-        marginTop: '40px',
+        marginTop: '10px',
         backgroundColor: '#b3b3b3',
         color: 'white',
         width: '200px',
@@ -39,16 +41,14 @@ const styles = theme => ({
     },
 
     chatHeader: {
-        width: 'calc(100% - 301px)',
-        height: '35px',
-        backgroundColor: '#344195',
-        position: 'fixed',
-        marginLeft: '301px',
+        height: '5%',
         fontSize: '16px',
         textAlign: 'center',
-        color: 'white',
         paddingTop: '10px',
-        boxSizing: 'border-box'
+        borderWidth: "1px",
+        borderColor: "#ccc",
+        borderRightStyle: "solid",
+        borderLeftStyle: "solid",
     }
 
 });

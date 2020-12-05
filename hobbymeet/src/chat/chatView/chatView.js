@@ -15,7 +15,9 @@ class ChatViewComponent extends React.Component {
         const { classes, chat, userObj } = this.props;
 
         if (chat === undefined) {
-            return (<div id="chatview-container" className={classes.content}>No chat selected!</div>);
+            return (<div id="chatview-container" className={classes.content}>
+                <h1>No chat selected.</h1>
+                </div>);
 
         }
         else {
@@ -24,7 +26,7 @@ class ChatViewComponent extends React.Component {
                     <div className={classes.chatHeader}>
                         Your conversation with {chat.users.filter(usr => usr !== userObj.email)}
                     </div>
-                    <main id="chatview-container" className={classes.content}>
+                    <main className={classes.content} id="chatview-container" >
                         {
                             chat.messages.map((_msg, _index) => {
                                 return (

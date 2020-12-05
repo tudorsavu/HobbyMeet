@@ -20,8 +20,9 @@ class ChatListComponent extends React.Component {
         const { classes, chats, imageUrls, userObj, names } = this.props
         return (
 
-            <div className={classes.root}>
-                <List>
+                <List className={classes.chatList}
+                dense 
+                >
                     {
                         chats.map((_chat, _index) => {
                             return (
@@ -42,7 +43,7 @@ class ChatListComponent extends React.Component {
                         })
                     }
                 </List>
-            </div>)
+            )
     }
 
 }

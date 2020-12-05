@@ -30,31 +30,29 @@ class ChatComponent extends React.Component {
         const nameObj = {}
         for (let i = 0; i < friends.length; i++) {
             const friendEmail = friends[i];
-            firebase.firestore().collection("users").doc(friendEmail).get().then(res => {
+            firebase.firestore().collection("users").doc(friendEmail).onSnapshot(res => {
                 urlObj[friendEmail] = res.get("imageUrl")
                 nameObj[friendEmail] = res.get("name")
             })
-            this.setState({ imageUrls: urlObj, names: nameObj }, () => {
-                setTimeout(() => {
-                    this.setState({ isLoading: false })
-                }, 1500);
-
-            })
+            this.setState({ imageUrls: urlObj, names: nameObj })
         }
 
         firebase.firestore().collection("chats").where("users", "array-contains", email)
             .onSnapshot(res => {
                 const chats = res.docs.map(_doc => _doc.data());
-                this.setState({ chats: chats }, () => { })
+                this.setState({ chats: chats }, () => { this.setState({isLoading: false}) })
             })
     }
 
+    componentWillUnmount() {
+        this.setState = (state, callback) => {
+          return
+        }
+      }
     buildDocKey = (friend) => [this.props.userObj.email, friend].sort().join(':');
 
     submitMsg = (message) => {
-
         const docKey = this.buildDocKey(this.state.chats[this.state.selectedChat].users.filter(usr => usr !== this.props.userObj.email))
-
         firebase.firestore().collection("chats").doc(docKey).update({
             messages: firebase.firestore.FieldValue.arrayUnion({
                 sender: this.props.userObj.email,
@@ -76,7 +74,7 @@ class ChatComponent extends React.Component {
             return (<CircularProgress className={classes.circularProg}></CircularProgress>)
         }
         return (
-            <div>
+            <div className={classes.container}>
                 <ChatListComponent
                     userObj={this.props.userObj}
                     selectChatFn={this.selectChat}
@@ -84,6 +82,7 @@ class ChatComponent extends React.Component {
                     selectedChatIndex={this.state.selectedChat}
                     imageUrls={this.state.imageUrls}
                     names={this.state.names} />
+                <div className={classes.chatContainer}>
                 <ChatViewComponent
                     userObj={this.props.userObj}
                     chat={this.state.chats[this.state.selectedChat]}
@@ -92,6 +91,8 @@ class ChatComponent extends React.Component {
                     this.state.selectedChat !== null ? <ChatTextBoxComponent
                         submitMsgFn={this.submitMsg} /> : null
                 }
+                </div>
+                
 
             </div>
         )

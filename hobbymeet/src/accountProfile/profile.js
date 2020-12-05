@@ -8,21 +8,13 @@ const firebase = require("firebase/app")
 
 class Profile extends React.Component {
     constructor(props) {
-        super(props);
+        super();
 
         console.log(props.profileUserObj)
-        if (firebase.auth().currentUser.uid === props.profileUserObj.id) {
             this.state = {
-                hasUpload: true,
                 image: null,
-                url: props.profileUserObj.imageUrl
             }
-        } else {
-            this.state = {
-                hasUpload: false,
-                url: ""
-            }
-        }
+            
     }
 
     handleImgInput = e => {
@@ -53,15 +45,17 @@ class Profile extends React.Component {
         }
     }
 
+    
+
     render() {
         const { classes, profileUserObj } = this.props;
         return (
             <div className={classes.profileRoot}>
-                <Typography variant="h3" className={classes.profileTitle}>{profileUserObj.title}</Typography>
+                <Typography variant="h3" className={classes.profileTitle}>{profileUserObj.name + "'s profile"}</Typography>
                 <Paper className={classes.profileContainer}>
                     <Grid container spacing={3}>
                         <Grid item className={classes.img}>
-                            <Avatar src={this.state.url} className={classes.avatar} />
+                            <Avatar src={profileUserObj.imageUrl} className={classes.avatar} />
                         </Grid>
                         <Grid item xs={12} sm container>
                             <Grid item xs container direction="column" spacing={2}>
@@ -91,12 +85,12 @@ class Profile extends React.Component {
                     </Grid>
                 </Paper>
                 {
-                    this.state.hasUpload ?
+                    profileUserObj.hasUpload ?
                         <div className={classes.upload}>
 
                             <Button variant="contained" color="primary" component="span" onClick={() => { this.handleUpload() }}>
                                 Upload your image
-                                </Button>
+                            </Button>
                             <input
                                 accept="image/*"
                                 className={classes.input}

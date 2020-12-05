@@ -3,12 +3,17 @@ import styles from "./styles";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Navbar from "../navbar/navbar"
 import Profile from "../accountProfile/profile"
-import { Typography } from "@material-ui/core";
 import Account from "../accountProfile/account"
 import axios from "axios"
 import Recommendation from "../recommendation/recommendation";
 import Notifications from "../notifications/notifications";
 import ChatComponent from "../chat/chat"
+import NoAuthDash from "./noAuthDash";
+import Friends from "../friends/friends";
+import AuthDash from "./authDash/authDash";
+import { CircularProgress } from "@material-ui/core";
+
+
 const firebase = require("firebase/app");
 
 
@@ -22,39 +27,13 @@ class DashboardComponent extends React.Component {
       componentToRender: "dashboard",
       profileUserObj: {},
       recommendations: [],
-      hobbySearch: null
+      hobbySearch: null,
+      isLoading: true
 
     }
 
   }
 
-  handleHobbySearchChange = input => {
-    this.setState({ hobbySearch: input }, () => {
-      axios.get("https://localhost:44379/api/recommendations/" + this.state.user.email + "/" + this.state.hobbySearch)
-        .then(res => {
-          this.setState({ recommendations: res.data }, () => { })
-        })
-    })
-
-  }
-
-  filterFriends = () => {
-    const data = this.state.recommendations;
-    var fri = this.state.userObj.friends
-    const not = this.state.userObj.notifications
-    const req = this.state.userObj.sentFriendRequests
-    if (data !== undefined && fri !== undefined) {
-      const res = [...fri, ...req, ...not]
-      for (let i = 0; i < data.length; i++) {
-        const element = data[i].userId;
-        if (res.includes(element)) {
-          data.splice(i, 1);
-          i = i - 1;
-        }
-      }
-
-    }
-  }
 
   componentDidMount() {
     firebase.auth().onAuthStateChanged((user) => {
@@ -62,12 +41,12 @@ class DashboardComponent extends React.Component {
         this.setState({ user: user })
         axios.get("https://localhost:44379/api/recommendations/" + user.email).then(res => {
 
-          this.setState({ recommendations: res.data }, () => { /*console.log(this.state.recommendations)*/ })
+          this.setState({ recommendations: res.data })
         })
         axios.get("https://localhost:44379/api/users/" + user.email).then(
           res => {
-            firebase.firestore().collection("users").doc(user.email).get()
-              .then(doc => {
+            firebase.firestore().collection("users").doc(user.email).onSnapshot
+              (doc => {
                 this.setState({
                   userObj: {
                     age: doc.get("age"),
@@ -82,15 +61,17 @@ class DashboardComponent extends React.Component {
                     notifications: doc.get("notifications"),
                     sentFriendRequests: doc.get("sentFriendRequests")
                   }
-                }, () => { /*console.log(this.state.userObj)*/ })
+                }, () => { this.setState({isLoading: false}) })
               })
           }
         )
 
       } else {
-        console.log("no one is logged")
+        this.setState({isLoading: false})
       }
     })
+    
+   
   }
 
   componentWillUnmount() {
@@ -99,58 +80,113 @@ class DashboardComponent extends React.Component {
     }
   }
 
-  handleComponentChange = (component, arg) => {
-    if (arg !== "") {
-      arg.title = "Your profile"
-      this.setState({ profileUserObj: arg }, () => {
-        this.setState({ componentToRender: component })
-      })
-    } else {
-      this.setState({ componentToRender: component })
-    }
-  }
+  handleProfileComponent = (data) => {this.setState({profileUserObj: data},()=>{this.handleComponentChange("profile")})}
+
+  handleRecommendationsComponent = (data) => {this.setState({recommendations: data},()=>{this.handleComponentChange("recommendations")})}
+
+  handleComponentChange = (component) => {this.setState({ componentToRender: component })}
 
   render() {
     const { classes } = this.props;
 
-    this.filterFriends();
+    if(this.state.isLoading === true){
+      return (<div className={classes.root}>
+        <CircularProgress className={classes.circularProg}/>
+      </div>)
+    }
     switch (this.state.componentToRender) {
       case "dashboard":
+        if(Object.keys(this.state.userObj).length === 0){ // check if user is logged
+          return (
+            <div style={{height: "90%"}}>
+            <Navbar 
+            userObj={this.state.userObj} 
+            history={this.props.history} 
+            handleComponentChange={this.handleComponentChange} 
+            handleProfileComponent={this.handleProfileComponent}/>
+            <NoAuthDash history={this.props.history} />
+          </div>)
+          
+        }
+        if(firebase.auth().currentUser.emailVerified){
+          console.log(firebase.auth().currentUser.emailVerified) 
+          console.log("email not verified!")
+        }
+        return (
+          <div >
+              <Navbar 
+              userObj={this.state.userObj} 
+              history={this.props.history} 
+              handleComponentChange={this.handleComponentChange}
+              handleProfileComponent={this.handleProfileComponent} />
+              <div className={classes.root}>
+                <AuthDash handleRecommendationsComponent={this.handleRecommendationsComponent} userObj={this.state.userObj}/>
+              </div>
+            </div>)
+      case "recommendations":
         return (
           <div>
-            <Navbar userObj={this.state.userObj} history={this.props.history} handleComponentChange={this.handleComponentChange} />
-            <Typography variant="h4" className={classes.welcome}>Welcome {this.state.userObj.name}!</Typography>
-            <div className={classes.root}>
-              <Recommendation userObj={this.state.userObj} recommendations={this.state.recommendations} handleHobbySearchChange={this.handleHobbySearchChange} />
+              <Navbar 
+              userObj={this.state.userObj} 
+              history={this.props.history} 
+              handleComponentChange={this.handleComponentChange} 
+              handleProfileComponent={this.handleProfileComponent}/>
+              <div className={classes.root}>
+                <Recommendation userObj={this.state.userObj} recommendations={this.state.recommendations} handleComponentChange={this.handleComponentChange} />
+              </div>
             </div>
-          </div>
-        );
+        )
       case "account":
         return (
           <div>
-            <Navbar userObj={this.state.userObj} history={this.props.history} handleComponentChange={this.handleComponentChange} />
+            <Navbar 
+            userObj={this.state.userObj} 
+            history={this.props.history} 
+            handleComponentChange={this.handleComponentChange} 
+            handleProfileComponent={this.handleProfileComponent}/>
             <Account userObj={this.state.userObj} history={this.props.history} />
           </div>)
       case "profile":
         return (
           <div>
-            <Navbar userObj={this.state.userObj} history={this.props.history} handleComponentChange={this.handleComponentChange} />
+            <Navbar 
+            userObj={this.state.userObj} 
+            history={this.props.history} 
+            handleComponentChange={this.handleComponentChange} 
+            handleProfileComponent={this.handleProfileComponent}/>
             <Profile profileUserObj={this.state.profileUserObj} />
           </div>)
-
       case "notifications":
         return (
           <div>
-            <Navbar userObj={this.state.userObj} history={this.props.history} handleComponentChange={this.handleComponentChange} />
+            <Navbar 
+            userObj={this.state.userObj} 
+            history={this.props.history} 
+            handleComponentChange={this.handleComponentChange} 
+            handleProfileComponent={this.handleProfileComponent}/>
             <Notifications userObj={this.state.userObj} />
           </div>
         )
-
       case "chat":
         return (
           <div>
-            <Navbar userObj={this.state.userObj} history={this.props.history} handleComponentChange={this.handleComponentChange} />
+            <Navbar 
+            userObj={this.state.userObj} 
+            history={this.props.history} 
+            handleComponentChange={this.handleComponentChange} 
+            handleProfileComponent={this.handleProfileComponent}/>
             <ChatComponent userObj={this.state.userObj} />
+          </div>
+        )
+      case "friends":
+        return (
+          <div>
+            <Navbar 
+            userObj={this.state.userObj} 
+            history={this.props.history} 
+            handleComponentChange={this.handleComponentChange} 
+            handleProfileComponent={this.handleProfileComponent}/>
+            <Friends userObj={this.state.userObj} handleProfileComponent={this.handleProfileComponent}/>
           </div>
         )
       default:

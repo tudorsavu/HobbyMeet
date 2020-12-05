@@ -38,7 +38,8 @@ class ChatTextBoxComponent extends React.Component {
                     placeholder="Type..."
                     className={classes.chatTextBox}
                     onKeyUp={(e) => this.userTyping(e)}
-                    onFocus={this.userClickedInput} />
+                    onFocus={this.userClickedInput}
+                    autoComplete="off" />
                 <Send
                     onClick={() => { this.submitMessage() }}
                     className={classes.sendBtn} />

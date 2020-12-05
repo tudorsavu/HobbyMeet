@@ -16,7 +16,9 @@ const styles = (theme) => ({
         marginLeft: theme.spacing(5),
         marginRight: theme.spacing(5),
         padding: theme.spacing(3),
-        height: "100%"
+        height: "100%",
+        width: "40%",
+        minWidth:"45vh"
 
     },
 

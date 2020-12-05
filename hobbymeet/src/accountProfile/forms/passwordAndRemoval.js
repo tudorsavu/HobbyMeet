@@ -12,7 +12,6 @@ class PasswordAndRemoval extends React.Component {
             oldPassword: "",
             newPassword: "",
             deletionPassword: "",
-            error: null
         }
     }
 
@@ -48,28 +47,61 @@ class PasswordAndRemoval extends React.Component {
         }
     }
 
+
+   buildDocKey = (friend) => [firebase.auth().currentUser.email, friend].sort().join(':');
+
+   removeSentFriendReq(requests) {
+    requests.forEach(friend => {
+        firebase.firestore().collection("users").doc(friend).update({
+            "notifications" : firebase.firestore.FieldValue.arrayRemove(firebase.auth().currentUser.email)
+        })
+    });
+   }
+   removeFriendReq(requests) {
+    requests.forEach(friend => {
+        firebase.firestore().collection("users").doc(friend).update({
+            "sentFriendRequests" : firebase.firestore.FieldValue.arrayRemove(firebase.auth().currentUser.email)
+        })
+    });
+   }
+   removeFriend(requests) {
+    requests.forEach(friend => {
+        firebase.firestore().collection("users").doc(friend).update({
+            "friends" : firebase.firestore.FieldValue.arrayRemove(firebase.auth().currentUser.email)
+        }).then(()=>{
+            firebase.firestore().collection("chats").doc(this.buildDocKey(friend)).delete()
+        })
+    });
+   }
+
+    
+
     deleteAccount = () => {
         const response = prompt("Type your password to remove your account.")
-        this.setState({ deletionPassword: response }, () => {
-            const user = firebase.auth().currentUser;
-            const credential = firebase.auth.EmailAuthProvider.credential(
-                user.email, this.state.deletionPassword
-            )
-            user.reauthenticateWithCredential(credential).then(() => {
-                axios.delete("https://localhost:44379/api/Users/" + user.uid).then(() => {
-                    user.delete().then(() => {
-                        firebase.firestore().collection("users").doc(user.email).delete().then(() => {
-                            this.props.history.push("/login")
-                        })
-                    })
+        if (response !== null){
+            this.setState({ deletionPassword: response }, () => {
+                const user = firebase.auth().currentUser;
+                const credential = firebase.auth.EmailAuthProvider.credential(user.email, this.state.deletionPassword)
+                firebase.firestore().collection("users").doc(user.email).get().then(res => {
+                      this.removeSentFriendReq(res.get("sentFriendRequests"))
+                      this.removeFriendReq(res.get("notifications")) 
+                      this.removeFriend(res.get("friends"))    
                 })
-            }).catch(error => {
-                this.setState({ error: "Deletion password is invalid!" })
+                
+                user.reauthenticateWithCredential(credential).then(() => {
+                    axios.delete("https://localhost:44379/api/Users/" + user.email).then(() => {
+                            firebase.firestore().collection("users").doc(user.email).delete().then(() => {
+                                user.delete().then(() => {
+                                    this.props.history.push("/login")
+                                })
+                            })
+                    })
+                }).catch(error => {
+                    console.log(error)
+                })
             })
-
-        })
+        }
     }
-
 
     render() {
         const { classes } = this.props
@@ -105,3 +137,6 @@ class PasswordAndRemoval extends React.Component {
 }
 
 export default withStyles(styles)(PasswordAndRemoval);
+
+
+/** */
