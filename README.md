@@ -11,6 +11,10 @@ Some styling changes have been made. The app will now feauture an event componen
 
 ![chat](/Images/chat.JPG)
 
+<h2>Events</h2>
+
+![event](/Images/event.JPG)
+
 <h2>Notification</h2>
 
 ![notification](/Images/notification.JPG)
@@ -21,10 +25,8 @@ Some styling changes have been made. The app will now feauture an event componen
 
 <h2>Friends</h2>
 
-![recommendation](/Images/friends.JPG)
+![friends](/Images/friends.JPG)
 
-<h2>Events</h2>
 
-![recommendation](/Images/event.JPG)
 
 
