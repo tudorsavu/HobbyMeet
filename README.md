@@ -7,13 +7,13 @@ Some styling changes have been made. The app will now feauture an event componen
 
 ![main page](/Images/dashboard.JPG)
 
+<h2>Events</h2>
+
+![event](/Images/eventPage.JPG)
+
 <h2>Chat</h2>
 
 ![chat](/Images/chat.JPG)
-
-<h2>Events</h2>
-
-![event](/Images/event.JPG)
 
 <h2>Notification</h2>
 
