@@ -23,4 +23,8 @@ Some styling changes have been made. The app will now feauture an event componen
 
 ![recommendation](/Images/friends.JPG)
 
+<h2>Events</h2>
+
+![recommendation](/Images/event.JPG)
+
 
