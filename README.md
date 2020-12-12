@@ -5,11 +5,11 @@ Some styling changes have been made. The app will now feauture an event componen
 
 <h2>Main page</h2>
 
-![main page](/Images/mainpage.JPG)
+![main page](/Images/dashboard.JPG)
 
 <h2>Chat</h2>
 
-![chat](/Images/chats.JPG)
+![chat](/Images/chat.JPG)
 
 <h2>Notification</h2>
 
@@ -18,5 +18,9 @@ Some styling changes have been made. The app will now feauture an event componen
 <h2>Recommendation</h2>
 
 ![recommendation](/Images/recommendation.JPG)
+
+<h2>Friends</h2>
+
+![recommendation](/Images/friends.JPG)
 
 
