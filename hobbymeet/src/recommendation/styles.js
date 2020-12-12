@@ -52,6 +52,11 @@ const styles = (theme) => ({
     },
    noMoreRec: {
         marginTop: theme.spacing(24)
+   },
+   circular: {
+       display: "flex",
+       justifyContent: "center",
+       marginTop: theme.spacing(8)
    }
       
   

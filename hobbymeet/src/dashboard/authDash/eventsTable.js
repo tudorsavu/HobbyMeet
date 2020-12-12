@@ -1,7 +1,7 @@
 import React from 'react'
 import styles from "./styles";
 import withStyles from "@material-ui/core/styles/withStyles";
-import { Button, Typography } from '@material-ui/core';
+import { Button, CircularProgress, Typography } from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -12,54 +12,88 @@ import Paper from '@material-ui/core/Paper';
 import Link from '@material-ui/core/Link'
 
 
-function createData(name, calories, fat, carbs, protein) {
-    return { name, calories, fat, carbs, protein };
-  }
-  
-  const rows = [
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-    createData('Cupcake', 305, 3.7, 67, 4.3),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-
-  ];
-
+const firebase = require("firebase/app");
 
 export class EventTable extends React.Component {
+
+    constructor(){
+      super()
+      this.state = {
+        eventsData: [],
+        isLoading: true
+      }
+    }
+
+    componentDidMount(){this.getEvents()}
+
+    getEvents(){
+      firebase.firestore().collection("events").where("date", ">", new Date()).limit(5).get().then(res => {
+        this.setState({ eventsData: res.docs.map(_doc => _doc.data()), isLoading: false},
+         () => {})
+      })
+    }
+
+    timestampToString(timestamp){
+      var a = new Date(timestamp.seconds * 1000);
+      var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      var year = a.getFullYear();
+      var month = months[a.getMonth()];
+      var date = a.getDate();
+      var hour = a.getHours();
+      var min = a.getMinutes();
+      var sec = a.getSeconds();
+      var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec;
+      return time;
+    }
+
     render() {
         const {classes} = this.props
+        if( this.state.eventsData.length === 0 && this.state.isLoading === false){
+          return <Paper className={classes.eventsPaper}>
+            <Typography variant="h4" className={classes.welcome}>No events at this time</Typography>
+          </Paper>
+        }
         return (
             <Paper className={classes.eventsPaper}>
                <Typography variant="h4" className={classes.welcome}>Upcoming events</Typography>
-               <div className={classes.table}>
-               <TableContainer component={Paper} >
+        {this.state.isLoading ?
+          <div>
+            <CircularProgress/>
+          </div> : 
+          <div className={classes.table}>
+    <TableContainer component={Paper} >
       <Table size="small" aria-label="a dense table">
         <TableHead>
           <TableRow>
             <TableCell>Event Title</TableCell>
-            <TableCell align="right">Date</TableCell>
-            <TableCell align="right">Participants</TableCell>
+            <TableCell align="left">Date</TableCell>
+            <TableCell align="left">Participants</TableCell>
             <TableCell align="right"></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.name}>
+          {this.state.eventsData.map((event) => (
+            <TableRow key={event.name}>
               <TableCell component="th" scope="row">
-                {row.name}
+                {event.name}
               </TableCell>
-              <TableCell align="right">{row.calories}</TableCell>
-              <TableCell align="right">{row.fat}</TableCell>
-              <TableCell align="right"><Link>View</Link></TableCell>
+              <TableCell align="left">{this.timestampToString(event.date)}</TableCell>
+              <TableCell align="left">{event.participants.length}</TableCell>
+              <TableCell align="right"><Link onClick={() => this.props.handleComponentChange("eventPage",event)}>View</Link></TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
     </TableContainer>
-    </div>
-    <Button className={classes.nextBtn} variant="contained" color="primary">View more..</Button>
-            </Paper>
+    </div>}
+    
+    
+    <Button className={classes.nextBtn} 
+    variant="contained" 
+    color="primary" 
+    onClick={() => {console.log("view more nigga")}}>
+      View more..</Button>
+                    </Paper>
         )
     }
 }

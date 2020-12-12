@@ -35,7 +35,7 @@ class Navbar extends React.Component {
     buildProfileUserObj(user){
         axios.get("https://localhost:44379/api/users/" + user.email).then(
             res => {
-              firebase.firestore().collection("users").doc(user.email).onSnapshot
+              firebase.firestore().collection("users").doc(user.email).get().then
                 (doc => {
                   this.setState({
                     profileUserObj: {
@@ -48,7 +48,8 @@ class Navbar extends React.Component {
                       hasUpload: true,
                      
                     }
-                  }, () => {this.props.handleProfileComponent(this.state.profileUserObj)})
+                    
+                  }, () => {this.props.handleComponentChange("profile",this.state.profileUserObj)})
                 })
             }
           )

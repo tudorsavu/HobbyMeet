@@ -17,10 +17,7 @@ class ChatTextBoxComponent extends React.Component {
 
     messageValid = (txt) => txt && txt.replace(/\s/g, '').length
 
-    userClickedInput = () => {
-        console.log("clicked input")
-    }
-
+    
     submitMessage = () => {
         if (this.messageValid(this.state.chatText)) {
             this.props.submitMsgFn(this.state.chatText)
@@ -38,7 +35,6 @@ class ChatTextBoxComponent extends React.Component {
                     placeholder="Type..."
                     className={classes.chatTextBox}
                     onKeyUp={(e) => this.userTyping(e)}
-                    onFocus={this.userClickedInput}
                     autoComplete="off" />
                 <Send
                     onClick={() => { this.submitMessage() }}

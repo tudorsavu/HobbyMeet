@@ -1,5 +1,5 @@
 import React from 'react'
-import { Typography, Paper, Avatar, Grid, Button, Box } from '@material-ui/core';
+import { Typography, Paper, Avatar, Grid, Button, Box, CircularProgress } from '@material-ui/core';
 import styles from "./styles";
 import withStyles from "@material-ui/core/styles/withStyles";
 import axios from "axios"
@@ -20,7 +20,8 @@ export class Recommendation extends React.Component {
             isLoading: true,
             hobbiesListFromApi: [],
             flag: false,
-            noMoreRec: false
+            noMoreRec: false,
+
         }
     }
 
@@ -50,29 +51,30 @@ export class Recommendation extends React.Component {
       }
 
     handleClick = () => {
-        
-        
-        if (this.state.iterator === this.props.recommendations.length) {
-            this.setState({noMoreRec: true})
-            return
-        } else {
-            this.setState({ iterator: this.state.iterator + 1 })
-        }
-        const email = this.props.recommendations[this.state.iterator].userId
-        firebase.firestore().collection("users").doc(email).get().then(doc => {
-            axios.get("https://localhost:44379/api/users/" + email).then(hobbies => {
-                this.setState({
-                    current: {
-                        age: doc.get("age"),
-                        description: doc.get("description"),
-                        email: doc.get("email"),
-                        name: doc.get("name"),
-                        url: doc.get("imageUrl"),
-                        hobbies: hobbies.data
-                    }
+        this.setState({isLoading: true}, () => {
+            if (this.state.iterator === this.props.recommendations.length) {
+                this.setState({noMoreRec: true, isLoading: false})
+                return
+            } else {
+                this.setState({ iterator: this.state.iterator + 1 })
+            }
+            const email = this.props.recommendations[this.state.iterator].userId
+            firebase.firestore().collection("users").doc(email).get().then(doc => {
+                axios.get("https://localhost:44379/api/users/" + email).then(hobbies => {
+                    this.setState({
+                        current: {
+                            age: doc.get("age"),
+                            description: doc.get("description"),
+                            email: doc.get("email"),
+                            name: doc.get("name"),
+                            url: doc.get("imageUrl"),
+                            hobbies: hobbies.data
+                        }
+                    }, () => {this.setState({isLoading:false})})
                 })
             })
         })
+        
     }
 
     sendFriendRequest = () => {
@@ -99,7 +101,11 @@ export class Recommendation extends React.Component {
     render() {
         const { classes } = this.props;
         const { current } = this.state;
-        
+        if(this.state.isLoading===true){
+            return( <div className={classes.circular}>
+                <CircularProgress></CircularProgress>
+            </div>)
+        }
         
         return (
             <div className={classes.root}>

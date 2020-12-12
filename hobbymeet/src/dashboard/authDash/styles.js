@@ -56,7 +56,7 @@ const styles = (theme) => ({
           justifyContent: "center",
           alignItems: "center",
           flexDirection: "column",
-          marginTop: theme.spacing(5),
+          marginTop: theme.spacing(3),
           marginLeft: theme.spacing(2),
           marginRight: theme.spacing(2),
           marginBottom: theme.spacing(5),
@@ -64,22 +64,22 @@ const styles = (theme) => ({
           paddingBottom: theme.spacing(2),
           width: "35%",
           minWidth: "50vh",
-          minHeight: "80%",
+          backgroundColor: "#fafafa"
           
       },
       eventsPaper: {
         display: "flex",
         alignItems: "center",
         flexDirection: "column",
-        marginTop: theme.spacing(5),
+        marginTop: theme.spacing(3),
         marginLeft: theme.spacing(2),
         marginRight: theme.spacing(2),
         marginBottom: theme.spacing(5),
         padding: theme.spacing(5),
         width: "45%",
         minWidth: "50vh",
-        minHeight: "80%",
-        
+        minHeight: "60vh",
+        backgroundColor: "#fafafa"
         
     },
  

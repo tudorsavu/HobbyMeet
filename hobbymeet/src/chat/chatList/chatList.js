@@ -15,9 +15,11 @@ class ChatListComponent extends React.Component {
     selectChat = (_index) => {
         this.props.selectChatFn(_index);
     }
+    
 
     render() {
         const { classes, chats, imageUrls, userObj, names } = this.props
+        console.log(imageUrls,names)
         return (
 
                 <List className={classes.chatList}

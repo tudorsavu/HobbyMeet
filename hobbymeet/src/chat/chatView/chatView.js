@@ -11,6 +11,13 @@ class ChatViewComponent extends React.Component {
         }
     }
 
+    componentDidMount(){
+        const container = document.getElementById("chatview-container")
+        if (container) {
+            container.scrollTo(0, container.scrollHeight);
+        }
+    }
+
     render() {
         const { classes, chat, userObj } = this.props;
 
@@ -36,6 +43,7 @@ class ChatViewComponent extends React.Component {
                                 )
                             })
                         }
+                        
                     </main>
                 </div>
             );

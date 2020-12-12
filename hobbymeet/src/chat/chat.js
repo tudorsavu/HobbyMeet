@@ -28,27 +28,46 @@ class ChatComponent extends React.Component {
 
         const urlObj = {};
         const nameObj = {}
-        for (let i = 0; i < friends.length; i++) {
+
+       for (let i = 0; i < friends.length; i++) {
             const friendEmail = friends[i];
-            firebase.firestore().collection("users").doc(friendEmail).onSnapshot(res => {
+            firebase.firestore().collection("users").doc(friendEmail).get().then(res => {
                 urlObj[friendEmail] = res.get("imageUrl")
                 nameObj[friendEmail] = res.get("name")
+                this.setState({ imageUrls: urlObj, names: nameObj }, () => { })
             })
-            this.setState({ imageUrls: urlObj, names: nameObj })
+            
+        }
+        
+        
+     
+        firebase.firestore().collection("chats").where("users", "array-contains", email).orderBy("lastMessageTimestamp","desc")
+            .onSnapshot(res => {
+                var newIdx = null
+                const chats = res.docs.map(_doc => _doc.data());
+                if(Object.keys(this.state.chats).length !== 0){
+                  newIdx = this.getNewChatIdx(this.state.chats,chats, this.state.selectedChat)
+                }
+                this.setState({ chats: chats, selectedChat: newIdx }, () => { this.setState({isLoading: false})
+                this.selectChat(0)})
+            })
+    }
+
+    getNewChatIdx(old, updated, curIdx){
+        const curChat = old[curIdx]
+        for(var i=0; i<updated.length; i++){
+            if(JSON.stringify(updated[i].users) === JSON.stringify(curChat.users)){
+                return i
+            }
         }
 
-        firebase.firestore().collection("chats").where("users", "array-contains", email)
-            .onSnapshot(res => {
-                const chats = res.docs.map(_doc => _doc.data());
-                this.setState({ chats: chats }, () => { this.setState({isLoading: false}) })
-            })
     }
 
     componentWillUnmount() {
         this.setState = (state, callback) => {
           return
         }
-      }
+    }
     buildDocKey = (friend) => [this.props.userObj.email, friend].sort().join(':');
 
     submitMsg = (message) => {
@@ -59,20 +78,24 @@ class ChatComponent extends React.Component {
                 message: message,
                 timeStamp: Date.now()
             }),
-            receiverHasRead: false
-        }).then(() => { console.log("succes") }, () => { console.log("fail") })
+            receiverHasRead: false,
+            lastMessageTimestamp: Date.now()
+        }).then(() => { }, () => { console.log("failed to send message") })
     }
 
     render() {
 
         const { classes } = this.props
+        if (this.state.isLoading === true) {
+            return (<div className={classes.circular}>
+                <CircularProgress/>
+            </div>)
+        }
 
         if (this.state.chats.length === 0) {
             return (<Typography variant="h4" className={classes.noFriends}>No friends to chat with yet.</Typography>)
         }
-        if (this.state.isLoading === true) {
-            return (<CircularProgress className={classes.circularProg}></CircularProgress>)
-        }
+       
         return (
             <div className={classes.container}>
                 <ChatListComponent
@@ -98,9 +121,8 @@ class ChatComponent extends React.Component {
         )
     }
 
-
     selectChat = (_index) => {
-        this.setState({ selectedChat: _index })
+        this.setState({ selectedChat: _index }, () => {})
     }
 
 }

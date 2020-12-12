@@ -6,6 +6,7 @@ import { Route, BrowserRouter as Router } from "react-router-dom";
 import LoginComponent from "./login/login";
 import SignupComponent from "./signup/signup";
 import DashboardComponent from "./dashboard/dashboard";
+import { createMuiTheme, ThemeProvider } from "@material-ui/core";
 
 const firebase = require("firebase/app");
 require("firebase/firestore");
@@ -23,16 +24,34 @@ firebase.initializeApp({
   measurementId: "G-1E1Y24YK81",
 });
 
+const theme = createMuiTheme({
+  palette: {
+     primary: {
+        main: "#005ce6" 
+               },
+     secondary: {
+        main: "#cccccc" 
+                }
+           }
+});
+
+const Footer = () => (
+  <footer className="footer"/>
+);
+
+
 const routing = (
+  <ThemeProvider theme={theme} key="1">
   <Router>
-    <div id="routing-container">
+    <div id="routing-container" className="content">
       <Route path="/" exact component={DashboardComponent}></Route>
       <Route path="/login" component={LoginComponent}></Route>
       <Route path="/signup" component={SignupComponent}></Route>
     </div>
   </Router>
+  </ThemeProvider>
 );
 
-ReactDOM.render(routing, document.getElementById("root"));
+ReactDOM.render([routing, <Footer key="2" />], document.getElementById("root"));
 
 serviceWorker.unregister();

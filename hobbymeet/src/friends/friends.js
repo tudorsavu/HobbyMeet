@@ -54,6 +54,12 @@ class Friends extends React.Component {
         }
 
     }
+    componentWillUnmount() {
+        this.setState = (state, callback) => {
+          return
+        }
+    }
+    
 
 
     buildDocKey = (friend) => [firebase.auth().currentUser.email, friend].sort().join(':');
@@ -91,7 +97,7 @@ class Friends extends React.Component {
                       hasUpload: false,
                      
                     }
-                  }, () => {this.props.handleProfileComponent(this.state.profileUserObj)})
+                  }, () => {this.props.handleComponentChange("profile",this.state.profileUserObj)})
                 })
             }
           )

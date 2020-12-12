@@ -7,8 +7,8 @@ import axios from "axios"
 import EventTable from "./eventsTable"
 
 class AuthDash extends React.Component {
-    constructor(){
-        super()
+    constructor(props){
+        super(props)
         this.state = {
             isLoading: false,
             hobbiesListFromApi: [],
@@ -52,7 +52,7 @@ class AuthDash extends React.Component {
                 .then(res => {
                   this.setState({ recommendations: res.data }, () => { 
                     this.filterFriends()
-                    this.props.handleRecommendationsComponent(this.state.recommendations)
+                    this.props.handleComponentChange("recommendations",this.state.recommendations)
                  })
                 })
             })
@@ -62,7 +62,7 @@ class AuthDash extends React.Component {
                 .then(res => {
                   this.setState({ recommendations: res.data }, () => { 
                     this.filterFriends()
-                    this.props.handleRecommendationsComponent(this.state.recommendations)
+                    this.props.handleComponentChange("recommendations",this.state.recommendations)
                  })
                 })
             })
@@ -96,7 +96,7 @@ class AuthDash extends React.Component {
                             <Typography className={classes.errorText}>You must pick a hobby first!</Typography> :
                             null}
                </Paper>
-            <EventTable/>
+            <EventTable handleComponentChange={this.props.handleComponentChange}/>
             </div>
             
         )

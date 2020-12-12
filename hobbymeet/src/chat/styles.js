@@ -11,15 +11,17 @@ const styles = theme => ({
         display: 'flex',
         justifyContent: 'center',
     },
-    circularProg: {
-        marginTop: theme.spacing(2),
-        marginLeft: theme.spacing(5)
-    },
+    
     chatContainer:{
         display: "flex", 
         flexDirection: "column",
         flex: 3,
         height: "100%"
+    },
+    circular: {
+        display: "flex",
+        justifyContent: "center",
+        marginTop: theme.spacing(8)
     }
 });
 

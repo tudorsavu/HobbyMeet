@@ -12,6 +12,7 @@ import NoAuthDash from "./noAuthDash";
 import Friends from "../friends/friends";
 import AuthDash from "./authDash/authDash";
 import { CircularProgress } from "@material-ui/core";
+import EventPage from "../events/eventPage";
 
 
 const firebase = require("firebase/app");
@@ -27,6 +28,7 @@ class DashboardComponent extends React.Component {
       componentToRender: "dashboard",
       profileUserObj: {},
       recommendations: [],
+      eventData: {},
       hobbySearch: null,
       isLoading: true
 
@@ -80,15 +82,31 @@ class DashboardComponent extends React.Component {
     }
   }
 
-  handleProfileComponent = (data) => {this.setState({profileUserObj: data},()=>{this.handleComponentChange("profile")})}
-
-  handleRecommendationsComponent = (data) => {this.setState({recommendations: data},()=>{this.handleComponentChange("recommendations")})}
-
-  handleComponentChange = (component) => {this.setState({ componentToRender: component })}
+  handleComponentChange = (component, data) => {
+    switch (component) {
+      case "profile":
+        this.setState({
+          profileUserObj: data,
+          componentToRender: component})
+        break;
+      case "eventPage":
+        this.setState({
+          eventData: data,
+          componentToRender: component})
+        break;
+      case "recommendations":
+        this.setState({
+          recommendations: data,
+          componentToRender: component})
+        break;
+      default:
+        this.setState({ componentToRender: component })
+        break;
+    }
+  }
 
   render() {
     const { classes } = this.props;
-
     if(this.state.isLoading === true){
       return (<div className={classes.root}>
         <CircularProgress className={classes.circularProg}/>
@@ -99,28 +117,25 @@ class DashboardComponent extends React.Component {
         if(Object.keys(this.state.userObj).length === 0){ // check if user is logged
           return (
             <div style={{height: "90%"}}>
-            <Navbar 
-            userObj={this.state.userObj} 
+            <Navbar
             history={this.props.history} 
-            handleComponentChange={this.handleComponentChange} 
-            handleProfileComponent={this.handleProfileComponent}/>
+            handleComponentChange={this.handleComponentChange} />
             <NoAuthDash history={this.props.history} />
           </div>)
           
         }
-        if(firebase.auth().currentUser.emailVerified){
+        /*if(firebase.auth().currentUser.emailVerified === false){
           console.log(firebase.auth().currentUser.emailVerified) 
           console.log("email not verified!")
-        }
+        }*/
         return (
-          <div >
-              <Navbar 
-              userObj={this.state.userObj} 
-              history={this.props.history} 
-              handleComponentChange={this.handleComponentChange}
-              handleProfileComponent={this.handleProfileComponent} />
+          <div>
+              <Navbar userObj={this.state.userObj}  
+              handleComponentChange={this.handleComponentChange}/>
               <div className={classes.root}>
-                <AuthDash handleRecommendationsComponent={this.handleRecommendationsComponent} userObj={this.state.userObj}/>
+                <AuthDash 
+                handleComponentChange={this.handleComponentChange}
+                userObj={this.state.userObj}/>
               </div>
             </div>)
       case "recommendations":
@@ -129,10 +144,12 @@ class DashboardComponent extends React.Component {
               <Navbar 
               userObj={this.state.userObj} 
               history={this.props.history} 
-              handleComponentChange={this.handleComponentChange} 
-              handleProfileComponent={this.handleProfileComponent}/>
+              handleComponentChange={this.handleComponentChange} />
               <div className={classes.root}>
-                <Recommendation userObj={this.state.userObj} recommendations={this.state.recommendations} handleComponentChange={this.handleComponentChange} />
+                <Recommendation 
+                userObj={this.state.userObj} 
+                recommendations={this.state.recommendations} 
+                handleComponentChange={this.handleComponentChange} />
               </div>
             </div>
         )
@@ -142,8 +159,7 @@ class DashboardComponent extends React.Component {
             <Navbar 
             userObj={this.state.userObj} 
             history={this.props.history} 
-            handleComponentChange={this.handleComponentChange} 
-            handleProfileComponent={this.handleProfileComponent}/>
+            handleComponentChange={this.handleComponentChange} />
             <Account userObj={this.state.userObj} history={this.props.history} />
           </div>)
       case "profile":
@@ -152,8 +168,7 @@ class DashboardComponent extends React.Component {
             <Navbar 
             userObj={this.state.userObj} 
             history={this.props.history} 
-            handleComponentChange={this.handleComponentChange} 
-            handleProfileComponent={this.handleProfileComponent}/>
+            handleComponentChange={this.handleComponentChange} />
             <Profile profileUserObj={this.state.profileUserObj} />
           </div>)
       case "notifications":
@@ -162,8 +177,7 @@ class DashboardComponent extends React.Component {
             <Navbar 
             userObj={this.state.userObj} 
             history={this.props.history} 
-            handleComponentChange={this.handleComponentChange} 
-            handleProfileComponent={this.handleProfileComponent}/>
+            handleComponentChange={this.handleComponentChange} />
             <Notifications userObj={this.state.userObj} />
           </div>
         )
@@ -173,8 +187,7 @@ class DashboardComponent extends React.Component {
             <Navbar 
             userObj={this.state.userObj} 
             history={this.props.history} 
-            handleComponentChange={this.handleComponentChange} 
-            handleProfileComponent={this.handleProfileComponent}/>
+            handleComponentChange={this.handleComponentChange} />
             <ChatComponent userObj={this.state.userObj} />
           </div>
         )
@@ -184,11 +197,23 @@ class DashboardComponent extends React.Component {
             <Navbar 
             userObj={this.state.userObj} 
             history={this.props.history} 
-            handleComponentChange={this.handleComponentChange} 
-            handleProfileComponent={this.handleProfileComponent}/>
-            <Friends userObj={this.state.userObj} handleProfileComponent={this.handleProfileComponent}/>
+            handleComponentChange={this.handleComponentChange} />
+            <Friends userObj={this.state.userObj} handleComponentChange={this.handleComponentChange}/>
           </div>
         )
+      case "eventPage":
+      return (
+        <div>
+            <Navbar 
+            userObj={this.state.userObj} 
+            history={this.props.history} 
+            handleComponentChange={this.handleComponentChange} />
+            <div className={classes.root}>
+              <EventPage eventData={this.state.eventData} handleComponentChange={this.handleComponentChange} />
+            </div>
+          </div>
+      )
+
       default:
         break;
     }

@@ -10,7 +10,6 @@ class Profile extends React.Component {
     constructor(props) {
         super();
 
-        console.log(props.profileUserObj)
             this.state = {
                 image: null,
             }
